@@ -3,9 +3,11 @@ const bodyparser = require("body-parser")
 const app = express()
 const cors = require("cors")
 const mainroutes = require("./routes/index")
+const cookieParser = require("cookie-parser")
 require("dotenv").config({ path: "../.env" })
 app.use(bodyparser.json())
 app.use(cors())
+app.use(cookieParser())
 app.use("/api/v1", mainroutes)
 
 app.listen(3000, () => {
