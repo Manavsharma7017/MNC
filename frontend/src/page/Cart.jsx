@@ -1,6 +1,6 @@
 const Cart = () => {
     return (
-        <div> page in</div>
+        <div> page cart</div>
     )
 }
 export default Cart

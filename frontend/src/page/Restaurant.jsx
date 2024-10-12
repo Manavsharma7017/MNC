@@ -1,6 +1,6 @@
 const Restaurant = () => {
     return (
-        <div> page in</div>
+        <div> page rest</div>
     )
 }
 export default Restaurant

@@ -1,6 +1,6 @@
 const Dashbord = () => {
     return (
-        <div> page in</div>
+        <div> page das</div>
     )
 }
 export default Dashbord

@@ -1,6 +1,6 @@
 const Adminauth = () => {
     return (
-        <div> page in</div>
+        <div> page admin</div>
     )
 }
 export default Adminauth

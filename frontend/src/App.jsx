@@ -8,7 +8,10 @@ import Landing from './page/Landing'
 import Restaurant from './page/Restaurant'
 import Dashbord from './page/Dasnbord'
 import Cart from './page/Cart'
+import { RecoilRoot } from 'recoil'
+
 function App() {
+
   const router = createBrowserRouter([
     {
       element: <AppLayout></AppLayout>,
@@ -24,9 +27,9 @@ function App() {
       },
       {
         path: "/admin/das",
-        element: <Dashbord></Dashbord>
+        element: <Adminauth></Adminauth>
       }, {
-        path: "/restaurant/:id",
+        path: "/restaurant",
         element: <Restaurant></Restaurant>
       }, {
         path: "/cart",
@@ -37,7 +40,7 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={router}></RouterProvider>
+      <RecoilRoot><RouterProvider router={router}></RouterProvider></RecoilRoot>
     </>
   )
 }

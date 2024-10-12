@@ -1,6 +1,6 @@
 const Auth = () => {
     return (
-        <div> page in</div>
+        <div> page auth</div>
     )
 }
 export default Auth
