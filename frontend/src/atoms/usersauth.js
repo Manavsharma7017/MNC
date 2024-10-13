@@ -9,3 +9,8 @@ export const isauthtype = atom({
     key: "isauthtype",
     default: "user"
 })
+
+export const useremail = atom({
+    key: "useremail",
+    default: ""
+})

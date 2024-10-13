@@ -1,17 +1,19 @@
 const { Router } = require("express")
 const route = Router()
-const { user } = require("../db/schema")
-const { usertype, usersigin } = require("../zod/typezod")
+const { user, userOTP } = require("../db/schema")
+const { usertype, usersigin, emailzod } = require("../zod/typezod")
 const jwt = require("jsonwebtoken")
 const { userexist } = require("../middleware/usermiddleware")
 const bcrypt = require('bcrypt');
+const { generater } = require("../middleware/otpgenerater")
+const { mail } = require("../middleware/otpmail")
 route.post("/signup", async (req, res) => {
     try {
         const data = req.body
         const userdata = usertype.safeParse(data)
         if (!userdata.success) {
             return res.status(411).json({
-                message: "Incorrect inputs"
+                message: useremail.error.errors[0].message
             })
         }
 
@@ -26,17 +28,14 @@ route.post("/signup", async (req, res) => {
 
             const finduser = await user.findOne({ username })
             if (finduser) {
-                res.status(200).json({
-                    message: "user already exist"
-                })
-            }
-            else {
-                const usercreated = await user.create({
-                    username,
+                const usercreated = await user.updateOne({ username, }, {
                     firstname,
                     lastname,
                     password,
                     address
+                })
+                res.status(200).json({
+                    message: ""
                 })
                 const userid = usercreated._id
                 const token = jwt.sign({ userid }, process.env.jwt)
@@ -46,6 +45,13 @@ route.post("/signup", async (req, res) => {
                     token,
 
                 })
+                return
+            }
+            else {
+                res.status(411).json({
+                    message: "user does not exist"
+                })
+                return
             }
         }
     } catch (e) {
@@ -61,19 +67,16 @@ route.post("/signin", async (req, res) => {
         const userdata = usersigin.safeParse(req.body)
         if (!userdata.success) {
             res.status(411).json({
-                message: "Incorrect inputs"
+                message: useremail.error.errors[0].message
             })
         }
         else {
             const username = req.body.username
-            const salt = await bcrypt.genSalt(10)
-            const password = await bcrypt.hash(req.body.password, salt)
-            console.log(password)
             const userexist = await user.findOne({
                 username,
-                password
             })
-            if (userexist) {
+            const ispasstrue = await bcrypt.compare(req.body.password, userexist.password)
+            if (userexist && ispasstrue) {
                 const userid = userexist._id
                 const token = jwt.sign({ userid }, process.env.jwt)
                 res.status(200).json({
@@ -84,18 +87,95 @@ route.post("/signin", async (req, res) => {
             }
             else {
                 res.status(411).json({
-                    message: "Error while logging in"
+                    message: "Incorrect email or passward"
                 })
             }
         }
     } catch (e) {
         res.status(411).json({
-            message: "error while login"
+            message: "Email is Incorrect"
         })
     }
 })
 
 
+route.get("/otp", async (req, res) => {
+    try {
+        const username = req.body.username
+        const useremail = emailzod.safeParse(username)
+        if (!useremail.success) {
+            res.status(411).json({
+                message: useremail.error.errors[0].message
+            })
+            return
+        }
+        else {
+            const userexist = await user.findOne({
+                username,
+            })
+            if (userexist) {
+                res.status(411).json({
+                    message: "Email already exist"
+                })
+                return
+            }
+            else {
+                const OTP = generater();
+                await user.create({
+                    username,
+                    OTP
+                })
+                mail({ otp: OTP, email: username })
+                res.status(200).json({
+                    message: "OTP has been send to your email successfully"
+                })
+            }
+        }
 
+    } catch (e) {
+        res.status(411).json({
+            message: "error in sendind OTP or use you have try create account one os click on resend otp "
+        })
+    }
+})
+route.get("/resendotp", async (req, res) => {
+    try {
+        const username = req.body.username
+        const useremail = emailzod.safeParse(username)
+        if (!useremail.success) {
+            res.status(411).json({
+                message: useremail.error.errors[0].message
+            })
+            return
+        }
+        else {
+            const userexist = await user.findOne({
+                username,
+            })
+            if (userexist) {
+                const OTP = generater();
+                await user.updateOne({
+                    username
+                }, {
+                    OTP
+                })
+                mail({ otp: OTP, email: username })
+                res.status(200).json({
+                    message: "OTP has been send to your email successfully"
+                })
+            }
+            else {
+                res.status(411).json({
+                    message: "Email doesnot exist"
+                })
+                return
+            }
+        }
 
+    } catch (e) {
+        res.status(411).json({
+            message: "error in sendind OTP or use you have try create account one os click on resend otp "
+        })
+    }
+})
 module.exports = route;

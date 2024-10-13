@@ -97,41 +97,40 @@ try {
             },
             firstname: {
                 type: String,
-                required: true,
                 trim: true,
                 maxLength: 30
             },
             lastname: {
                 type: String,
-                required: true,
                 trim: true,
                 maxLength: 30
             },
             password: {
                 type: String,
-                required: true,
                 mimLength: 6
             },
             address: {
                 type: String,
+            },
+            OTP: {
+                type: Number,
                 required: true,
+                trim: true,
             },
             usercart: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: cart,
-
             }
         }, { timestamps: true }
     )
     const user = mongoose.model("user", userschema)
 
-
-
     module.exports = {
         user,
         cart,
         restaurant,
-        fooditeam
+        fooditeam,
+
     }
 } catch (err) {
     console.log("unable to make schema")
