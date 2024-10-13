@@ -39,9 +39,9 @@ function App() {
   ])
 
   return (
-    <>
+    <div className='w-screen h-screen'>
       <RecoilRoot><RouterProvider router={router}></RouterProvider></RecoilRoot>
-    </>
+    </div>
   )
 }
 
