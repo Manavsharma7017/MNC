@@ -99,12 +99,12 @@ route.post("/signin", async (req, res) => {
 })
 
 
-route.get("/otp", async (req, res) => {
+route.post("/otp", async (req, res) => {
     try {
         const username = req.body.username
         const useremail = emailzod.safeParse(username)
         if (!useremail.success) {
-            res.status(411).json({
+            res.status(200).json({
                 message: useremail.error.errors[0].message
             })
             return
@@ -114,7 +114,7 @@ route.get("/otp", async (req, res) => {
                 username,
             })
             if (userexist) {
-                res.status(411).json({
+                res.status(200).json({
                     message: "Email already exist"
                 })
                 return
@@ -133,12 +133,12 @@ route.get("/otp", async (req, res) => {
         }
 
     } catch (e) {
-        res.status(411).json({
+        res.status(200).json({
             message: "error in sendind OTP or use you have try create account one os click on resend otp "
         })
     }
 })
-route.get("/resendotp", async (req, res) => {
+route.post("/resendotp", async (req, res) => {
     try {
         const username = req.body.username
         const useremail = emailzod.safeParse(username)
