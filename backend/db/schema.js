@@ -133,5 +133,5 @@ try {
 
     }
 } catch (err) {
-    console.log("unable to make schema")
+    console.log("unable to make mongo schema")
 }

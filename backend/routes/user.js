@@ -178,4 +178,40 @@ route.post("/resendotp", async (req, res) => {
         })
     }
 })
+route.post("/otpsubmit", async (req, res) => {
+    try {
+        const username = req.body.username
+        const otp = req.body.OTP
+        const useremail = emailzod.safeParse(username)
+        if (!useremail.success) {
+            res.status(200).json({
+                message: useremail.error.errors[0].message
+            })
+            return
+        }
+        else {
+            const userexist = await user.findOne({
+                username,
+            })
+            if (userexist && (userexist.OTP === otp)) {
+                res.status(200).json({
+                    message: "verification done"
+                })
+            }
+            else {
+                res.status(411).json({
+                    message: "Email doesnot exist"
+                })
+                return
+            }
+
+        }
+    } catch (e) {
+        res.status(411).json({
+            message: "error in verification "
+        })
+    }
+})
+
+
 module.exports = route;
